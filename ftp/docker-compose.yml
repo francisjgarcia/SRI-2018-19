@@ -1,0 +1,21 @@
+version: '3'
+services:
+    ftpd:
+        container_name: SrvFTP
+        image: francisjgarcia/ftp
+        ports:
+            - "20-21:20-21"
+            - "10090-10100:10090-10100"
+        volumes:
+            - "/root/proyecto_docker/ftp/datos/ficheros:/home/vsftpd:rw"
+        networks:
+            sri:
+                ipv4_address: 192.168.200.2
+
+networks:
+  sri:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.200.0/24

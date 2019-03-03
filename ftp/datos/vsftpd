@@ -1,0 +1,2 @@
+auth required pam_mysql.so user=frodo passwd=bolson host=192.168.60.10 db=dbmysql table=tbusuarios usercolumn=username passwdcolumn=passwd crypt=1
+account required pam_mysql.so user=frodo passwd=bolson host=192.168.60.10 db=dbmysql table=tbusuarios usercolumn=username passwdcolumn=passwd crypt=1

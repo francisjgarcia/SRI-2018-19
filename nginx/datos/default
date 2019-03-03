@@ -1,0 +1,15 @@
+upstream web {
+    server 192.168.60.3:80;
+    server 192.168.60.4:80;
+    server 192.168.60.5:80;
+}
+
+server {
+    listen 80;
+    server_name francisjgarcia.ml;
+
+    location / {
+        proxy_pass http://web;
+        add_header X-Upstream $upstream_addr;
+    }
+}

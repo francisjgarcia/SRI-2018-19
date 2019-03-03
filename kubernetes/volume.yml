@@ -1,0 +1,25 @@
+apiVersion: v1  
+kind: PersistentVolume  
+metadata:  
+  name: nfs-cluster
+spec:  
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.245.1.1
+    path: "/var/nfsshare/ghost"
+  persistentVolumeReclaimPolicy: Retain
+
+---
+kind: PersistentVolumeClaim  
+apiVersion: v1  
+metadata:  
+  name: nfs-cluster
+spec:  
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi

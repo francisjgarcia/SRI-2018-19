@@ -1,0 +1,53 @@
+version: '3'
+services:
+    prometheus:
+        container_name: SrvMonitorizador
+        image: prom/prometheus
+        ports:
+            - '9091:9090'
+        volumes:
+            - '/root/proyecto_docker/prometheus/datos/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+        networks:
+            sri:
+                ipv4_address: 192.168.200.2
+
+    prometheus_nodo_monitorizado:
+        container_name: NodoMonitorizado
+        image: prom/node-exporter
+        ports:
+            - '9100:9100'
+        volumes:
+            - '/proc:/host/proc'
+            - '/sys:/host/sys'
+            - '/:/rootfs'
+        environment:
+            - 'net="host" prom/node-exporter'
+            - 'collector.procfs /host/proc'
+            - 'collector.sysfs /host/proc'
+        networks:
+            sri:
+                ipv4_address: 192.168.200.3
+
+    grafana:
+        container_name: SrvMonitorizadorGrafico
+        image: grafana/grafana:3.0.0-beta7
+        ports:
+            - '3000:3000'
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=bolson
+        depends_on:
+            - prometheus
+        networks:
+            sri:
+                ipv4_address: 192.168.200.4
+
+
+networks:
+  sri:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.200.0/24

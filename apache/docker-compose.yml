@@ -1,0 +1,21 @@
+version: '3'
+services:
+    apache1:
+        container_name: SrvWeb1
+        image: francisjgarcia/apache
+        ports:
+            - '80:80'
+        volumes:
+            - '/root/proyecto_docker/apache/datos/web:/dockerweb:ro'
+        networks:
+            sri:
+                ipv4_address: 192.168.150.2
+
+
+networks:
+  sri:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.150.0/24

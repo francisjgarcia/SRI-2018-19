@@ -1,0 +1,143 @@
+version: '3'
+services:
+    nginx:
+        container_name: SrvProxyWeb
+        image: francisjgarcia/nginx
+        ports:
+            - '80:80'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.2
+
+    apache1:
+        container_name: SrvWeb1
+        image: francisjgarcia/apache
+        ports:
+            - '80'
+        volumes:
+            - '/root/proyecto_docker/apache/datos/web:/dockerweb:ro'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.3
+
+    apache2:
+        container_name: SrvWeb2
+        image: francisjgarcia/apache
+        ports:
+            - '80'
+        volumes:
+            - '/root/proyecto_docker/apache/datos/web:/dockerweb:ro'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.4
+
+    apache3:
+        container_name: SrvWeb3
+        image: francisjgarcia/apache
+        ports:
+            - '80'
+        volumes:
+            - '/root/proyecto_docker/apache/datos/web:/dockerweb:ro'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.5
+
+    mysql:
+        container_name: SrvMySQL
+        image: francisjgarcia/mysql
+        ports:
+            - '3306:3306'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.10
+
+    ftp:
+        container_name: SrvFTP
+        image: francisjgarcia/ftp
+        ports:
+            - '20-21:20-21'
+            - '10090-10100:10090-10100'
+        volumes:
+            - '/root/proyecto_docker/ftp/datos/ficheros:/home/vsftpd:rw'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.20
+
+    postfix_reenviador:
+        container_name: SrvCorreoReenviador
+        image: francisjgarcia/postfixreenviador
+        ports:
+            - '25:25'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.50
+
+    postfix_server:
+        container_name: SrvCorreoServer
+        image: francisjgarcia/postfixserver
+        ports:
+            - '2525:25'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.51
+
+    openfire:
+        container_name: SrvMensajeria
+        image: sameersbn/openfire
+        ports:
+            - '9090:9090'
+            - '5222:5222'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.100
+
+    prometheus:
+        container_name: SrvMonitorizador
+        image: prom/prometheus
+        ports:
+            - '9091:9090'
+        volumes:
+            - '/root/proyecto_docker/prometheus/datos/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+        networks:
+            sri:
+                ipv4_address: 192.168.60.200
+
+    grafana:
+        container_name: SrvMonitorizadorGrafico
+        image: grafana/grafana:3.0.0-beta7
+        ports:
+            - '3000:3000'
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=bolson
+        depends_on:
+            - prometheus
+        networks:
+            sri:
+                ipv4_address: 192.168.60.201
+
+    prometheus_nodo_monitorizado:
+        container_name: NodoMonitorizado
+        image: prom/node-exporter
+        ports:
+            - '9100:9100'
+        volumes:
+            - '/proc:/host/proc'
+            - '/sys:/host/sys'
+            - '/:/rootfs'
+        environment:
+            - 'net="host" prom/node-exporter'
+            - 'collector.procfs /host/proc'
+            - 'collector.sysfs /host/proc'
+        networks:
+            sri:
+                ipv4_address: 192.168.60.254
+
+networks:
+  sri:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.60.0/24

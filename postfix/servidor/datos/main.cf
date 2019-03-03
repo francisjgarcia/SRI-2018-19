@@ -1,0 +1,123 @@
+# Global Postfix configuration file. This file lists only a subset
+# of all parameters. For the syntax, and for a complete parameter
+# list, see the postconf(5) manual page (command: "man 5 postconf").
+#
+# To avoid breaking things, Postfix will use backwards-compatible
+# default settings and log where it uses those old backwards-compatible
+# default settings, until the system administrator has determined
+# if any backwards-compatible default settings need to be made
+# permanent in main.cf or master.cf.
+#
+# When this review is complete, update the compatibility_level setting
+# below as recommended in the RELEASE_NOTES file.
+#
+# The level below is what should be used with new (not upgrade) installs.
+#
+compatibility_level = 2
+# by the mail_owner account (see below).
+#
+data_directory = /var/lib/postfix
+
+# QUEUE AND PROCESS OWNERSHIP
+#
+# The mail_owner parameter specifies the owner of the Postfix queue
+# and of most Postfix daemon processes. Specify the name of a user
+# account THAT DOES NOT SHARE ITS USER OR GROUP ID WITH OTHER ACCOUNTS
+# AND THAT OWNS NO OTHER FILES OR PROCESSES ON THE SYSTEM. In
+# particular, don't specify nobody or daemon. PLEASE USE A DEDICATED
+# USER.
+#
+mail_owner = postfix
+
+# INTERNET HOST AND DOMAIN NAMES
+#
+# The myhostname parameter specifies the internet hostname of this
+# mail system. The default is to use the fully-qualified domain name
+# from gethostname(). $myhostname is used as a default value for many
+# other configuration parameters.
+#
+myhostname = francisjgarcia.es
+#myhostname = virtual.domain.tld
+
+# The mydomain parameter specifies the local internet domain name.
+# The default is to use $myhostname minus the first component.
+# $mydomain is used as a default value for many other configuration
+# parameters.
+#
+mydomain = francisjgarcia.es
+
+# Note: you need to stop/start Postfix when this parameter changes.
+#
+inet_interfaces = all
+#inet_interfaces = $myhostname
+#inet_interfaces = $myhostname, localhost
+# See also below, section "REJECTING MAIL FOR UNKNOWN LOCAL USERS".
+#
+#mydestination = $myhostname, localhost.$mydomain, localhost
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+#mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain,
+# mail.$mydomain, www.$mydomain, ftp.$mydomain
+
+# The right-hand side of the lookup tables is conveniently ignored.
+# In the left-hand side, specify a bare username, an @domain.tld
+# wild-card, or specify a user@domain.tld address.
+#
+local_recipient_maps = unix:passwd.byname $alias_maps
+#local_recipient_maps = proxy:unix:passwd.byname $alias_maps
+#local_recipient_maps =
+#
+#mynetworks = 168.100.189.0/28, 127.0.0.0/8
+#mynetworks = $config_directory/mynetworks
+#mynetworks = hash:/etc/postfix/network_table
+mynetworks = 127.0.0.0/8, 10.0.0.0/24
+# It will take a minute or so before changes become visible. Use
+# "postfix reload" to eliminate the delay.
+#
+#alias_maps = dbm:/etc/aliases
+alias_maps = hash:/etc/aliases
+#alias_maps = hash:/etc/aliases, nis:mail.aliases
+#alias_maps = netinfo:/aliases
+#alias_database = dbm:/etc/aliases
+#alias_database = dbm:/etc/mail/aliases
+alias_database = hash:/etc/aliases
+#alias_database = hash:/etc/aliases, hash:/opt/majordomo/aliases
+# DELIVERY TO MAILBOX
+#
+# The home_mailbox parameter specifies the optional pathname of a
+# mailbox file relative to a user's home directory. The default
+# mailbox file is /var/spool/mail/user or /var/mail/user. Specify
+# "Maildir/" for qmail-style delivery (the / is required).
+#
+#home_mailbox = Mailbox
+home_mailbox = Maildir/
+# sendmail_path: The full pathname of the Postfix sendmail command.
+# This is the Sendmail-compatible mail posting interface.
+#
+sendmail_path = /usr/sbin/postfix
+
+# newaliases_path: The full pathname of the Postfix newaliases command.
+# This is the Sendmail-compatible command to build alias databases.
+#
+newaliases_path = /usr/bin/newaliases
+
+# mailq_path: The full pathname of the Postfix mailq command. This
+# is the Sendmail-compatible mail queue listing command.
+#
+mailq_path = /usr/bin/mailq
+
+# setgid_group: The group for mail submission and queue management
+# commands. This must be a group name with a numerical group ID that
+# is not shared with other accounts, not even with the Postfix account.
+#
+setgid_group = postdrop
+
+#html_directory =
+# manpage_directory: The location of the Postfix on-line manual pages.
+#manpage_directory =
+# sample_directory: The location of the Postfix sample configuration files.
+#sample_directory =
+#readme_directory =
+# add to the end of file: limit an email size to 10M
+message_size_limit = 10485760
+# limit mailbox size to 1G
+mailbox_size_limit = 1073741824

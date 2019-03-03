@@ -1,0 +1,13 @@
+﻿Se te acaba de generar un nuevo usuario para poder utilizar los distintos servicios:
+- Servidor web:
+	- Usuario PAM.
+	- Usuario MySQL.
+
+- Servidor FTP:
+	- Usuario MySQL.
+
+- Servidor de correos:
+	- Usuario PAM.
+
+Puedes acceder al servidor web vía: http://francisjgarcia.ml
+Y al servidor FTP vía: ftp://francisjgarcia.ml
