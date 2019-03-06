@@ -1,3 +1,35 @@
+#!/usr/bin/perl
+
+## NOTA: Este script debe ser ejecutado desde el equipo que tiene los contenedores docker.
+
+# Pedir datos de usuario y contraseña por teclado
+print "Nuevo usuario para la base de datos: ";
+$usuario=<STDIN>;
+print "Contraseña: ";
+$clave=<STDIN>;
+
+# Eliminar salto de línea
+chop($usuario);
+chop($clave);
+
+# Ejecutar openssl para cifrar la contraseña
+my $clavecifrada = qx(openssl passwd -crypt $clave);
+
+# Eliminar salto de línea
+chop($clavecifrada);
+
+# Utilizar librería de conexión con la base de datos
+use DBI;
+
+# Parámetros de conexión con la base de datos
+my $dbname = 'dbmysql';
+my $dbhost = 'francisjgarcia.ml';
+my $dbuser = 'frodo';
+my $dbpwd = 'bolson';
+my $dbh;
+my $stmt;
+my $sth;
+my $row;
 
 # Conexión con la base de datos
 $dbh = DBI->connect("DBI:mysql:$dbname;host=$dbhost", $dbuser, $dbpwd) or die "Error de conexion: $DBI::errstr";
@@ -21,6 +53,7 @@ while ($row = $sth->fetchrow_hashref) {
 	$coma=", ";
 }
 print "\n";
+
 # Desconexión de la base de datos en caso de error
 if (! $dbh->disconnect) {
 	warn "Error al desconectarse de la base de datos: $DBI::errstr";
